@@ -16,7 +16,9 @@ var Mustache = function() {
       "IMPLICIT-ITERATOR": true
     },
     context: {},
-
+    loader: function(name){
+        throw({message: "unknown_partial '" + name + "'"});
+    },
     render: function(template, context, partials, in_recursion) {
       // reset buffer & set context
       if(!in_recursion) {
@@ -86,7 +88,7 @@ var Mustache = function() {
     render_partial: function(name, context, partials) {
       name = this.trim(name);
       if(!partials || partials[name] === undefined) {
-        throw({message: "unknown_partial '" + name + "'"});
+        partials[name] = this.loader(name);
       }
       if(typeof(context[name]) != "object") {
         return this.render(partials[name], context, partials, true);
