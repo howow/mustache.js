@@ -3,7 +3,7 @@
 
   See http://mustache.github.com/ for more info.
 */
-
+(function(){
 var Mustache = function() {
   var Renderer = function() {};
 
@@ -16,9 +16,6 @@ var Mustache = function() {
       "IMPLICIT-ITERATOR": true
     },
     context: {},
-    loader: function(name){
-        throw({message: "unknown_partial '" + name + "'"});
-    },
     render: function(template, context, partials, in_recursion) {
       // reset buffer & set context
       if(!in_recursion) {
@@ -88,7 +85,7 @@ var Mustache = function() {
     render_partial: function(name, context, partials) {
       name = this.trim(name);
       if(!partials || partials[name] === undefined) {
-        partials[name] = this.loader(name);
+        partials[name] = Mustache.loader(name);
       }
       if(typeof(context[name]) != "object") {
         return this.render(partials[name], context, partials, true);
@@ -309,7 +306,9 @@ var Mustache = function() {
   return({
     name: "mustache.js",
     version: "0.3.1-dev",
-
+    loader: function(){
+        throw({message: "unknown_partial '" + name + "'"});
+    },
     /*
       Turns a template and view into HTML
     */
@@ -325,3 +324,20 @@ var Mustache = function() {
     }
   });
 }();
+
+if (typeof exports !== 'undefined') {
+   if (typeof module !== 'undefined' && module.exports) {
+     exports = module.exports = Mustache;
+   }
+   exports.Mustache = Mustache;
+} else if (typeof define === 'function' && define.amd) {
+   // Register as a named module with AMD.
+   define('mustache', function() {
+     return Mustache;
+   });
+} else {
+   // Exported as a string, for Closure Compiler "advanced" mode.
+   root['Mustache'] = Mustache;
+}
+
+})();
