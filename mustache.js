@@ -46,9 +46,7 @@ var Mustache = function() {
       Sends parsed lines
     */
     send: function(line) {
-      if(line !== "") {
         this.buffer.push(line);
-      }
     },
 
     /*
